@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | ReWear</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: { light: '#dcfce7', DEFAULT: '#16a34a', dark: '#15803d' }
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body>
+    <header>
+        <h2><a href="/dashboard">♻️ ReWear</a></h2>
+        <nav>
+            <span>Hello, {{ current_user.username }}!</span> | 
+            <a href="/logout">Log Out</a>
+        </nav>
+    </header>
+    <hr>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+
+        <section>
+            <h3>Add to Inventory</h3>
+            <form method="POST" action="/add_item">
+                <div>
+                    <label for="name">Item Name:</label>
+                    <input type="text" name="name" id="name" placeholder="e.g., Vintage Denim Jacket" required>
+                </div>
+                <br>
+                
+                <div>
+                    <label for="category">Category:</label>
+                    <select name="category" id="category" required>
+                        <option value="Tops">Tops & Shirts</option>
+                        <option value="Bottoms">Bottoms & Pants</option>
+                        <option value="Outerwear">Outerwear & Jackets</option>
+                        <option value="Shoes">Shoes</option>
+                        <option value="Accessories">Accessories</option>
+                    </select>
+                </div>
+                <br>
+
+                <div>
+                    <label for="condition">Condition:</label>
+                    <select name="condition" id="condition" required>
+                        <option value="Brand New">Brand New</option>
+                        <option value="Like New">Like New</option>
+                        <option value="Gently Used">Gently Used</option>
+                        <option value="Well Loved">Well Loved</option>
+                    </select>
+                </div>
+                <br>
+                
+                <button type="submit">+ Add Item</button>
+            </form>
+        </section>
+
+        <hr>
+
+        <section>
+            <h3>My Wardrobe</h3>
+            
+            {% if items %}
+                <ul>
+                {% for item in items %}
+                    <li>
+                        <strong>{{ item.name }}</strong> ({{ item.status }})<br>
+                        Category: {{ item.category }} | Condition: {{ item.condition }}<br>
+                        <em>Added on {{ item.date_posted.strftime('%Y-%m-%d') }}</em>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>Your wardrobe is empty. Use the form above to add your first piece of clothing!</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

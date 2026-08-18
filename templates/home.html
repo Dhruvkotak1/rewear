@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReWear | Sustainable Clothing Exchange</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: { light: '#dcfce7', DEFAULT: '#16a34a', dark: '#15803d' }
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <nav class="bg-white shadow-sm border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="/" class="text-2xl font-bold text-brand tracking-tight">♻️ ReWear</a>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="/login" class="text-gray-600 hover:text-brand px-3 py-2 rounded-md text-sm font-medium transition-colors">Login</a>
+                    <a href="/register" class="bg-brand hover:bg-brand-dark text-white px-4 py-2 rounded-md text-sm font-medium transition-colors shadow-sm">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center bg-brand-light/30">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mb-6">
+                Refresh your wardrobe. <br class="hidden md:block">
+                <span class="text-brand">Save the planet.</span>
+            </h1>
+            <p class="mt-4 max-w-2xl text-lg md:text-xl text-gray-600 mx-auto mb-10">
+                Join your local community-driven clothing exchange. Trade items you no longer wear for something new-to-you, right in your neighborhood.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="/register" class="bg-brand hover:bg-brand-dark text-white font-bold py-3 px-8 rounded-full shadow-lg transform transition hover:-translate-y-0.5 text-lg">
+                    Start Exchanging
+                </a>
+                <a href="/login" class="bg-white hover:bg-gray-50 text-gray-800 border border-gray-200 font-bold py-3 px-8 rounded-full shadow-sm transition text-lg">
+                    Login to Account
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <section class="bg-white py-16">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-6">
+                    <div class="text-4xl mb-4">🌍</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Sustainable Fashion</h3>
+                    <p class="text-gray-600">Reduce fast fashion waste by giving high-quality clothing a second life.</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl mb-4">📍</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Local Matches</h3>
+                    <p class="text-gray-600">Our proximity engine connects you with exchanges right in your neighborhood.</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-4xl mb-4">🤝</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Community Driven</h3>
+                    <p class="text-gray-600">Build a trusted network with clean, transparent transaction histories.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-800 text-gray-400 py-8 text-center text-sm">
+        <p>&copy; 2026 ReWear Exchange. Built for a sustainable future.</p>
+    </footer>
+
+</body>
+</html>
