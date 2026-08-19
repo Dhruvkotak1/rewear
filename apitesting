@@ -1,0 +1,133 @@
+from datetime import timedelta
+#from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
+from flask_cors import CORS
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    get_jwt_identity,
+    jwt_required,
+)
+from flask_sqlalchemy import SQLAlchemy
+import bcrypt
+
+app = Flask(__name__)
+
+# Configuration
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["JWT_SECRET_KEY"] = "change-this-to-a-super-secret-key"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+
+CORS(app)  # Enable CORS for frontend requests
+db = SQLAlchemy(app)
+jwt = JWTManager(app)
+
+# User Model
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
+
+# Initialize database
+with app.app_context():
+    db.create_all()
+
+# --- Routes ---
+
+#@app.route("/")
+#def home():
+ #  return jsonify({
+#        "status": "online",
+  #      "message": "Flask Auth API is running successfully!",
+   #     "endpoints": {
+    #        "signup": "POST /api/signup",
+     #       "login": "POST /api/login",
+      #      "profile": "GET /api/profile"
+       # }
+  #  }), 200
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+@app.route("/api/signup", methods=["POST"])
+def signup():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON body"}), 400
+
+    username = data.get("username")
+    email = data.get("email")
+    password = data.get("password")
+
+    if not username or not email or not password:
+        return jsonify({"error": "All fields are required"}), 400
+
+    # Check for existing user
+    if User.query.filter_by(email=email).first():
+        return jsonify({"error": "Email already exists"}), 409
+    if User.query.filter_by(username=username).first():
+        return jsonify({"error": "Username already exists"}), 409
+
+    # Hash password
+    hashed_password = bcrypt.hashpw(
+        password.encode("utf-8"), bcrypt.gensalt()
+    ).decode("utf-8")
+
+    # Create new user
+    new_user = User(username=username, email=email, password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"message": "User registered successfully"}), 201
+
+
+@app.route("/api/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid JSON body"}), 400
+
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    # Verify user and password hash
+    if not user or not bcrypt.checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    # Generate JWT
+    access_token = create_access_token(identity=str(user.id))
+
+    return jsonify({
+        "message": "Login successful",
+        "access_token": access_token,
+        "user": {"id": user.id, "username": user.username, "email": user.email}
+    }), 200
+
+
+@app.route("/api/profile", methods=["GET"])
+@jwt_required()
+def profile():
+    current_user_id = int(get_jwt_identity())
+    user = db.session.get(User, current_user_id)
+
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return jsonify({
+        "id": user.id,
+        "username": user.username,
+        "email": user.email
+    }), 200
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
